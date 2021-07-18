@@ -8,6 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity(name = "Roles")
 @Table(name = "roles")
 public class Roles {
@@ -17,6 +19,7 @@ public class Roles {
 	private String authority;
 
 	@ManyToMany(mappedBy = "role", cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<Users> users;
 
 	public Long getId() {

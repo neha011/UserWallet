@@ -11,7 +11,6 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 import com.userwallet.wallet.dto.AddMoneyRequestDTO;
-import com.userwallet.wallet.dto.SignInDTO;
 import com.userwallet.wallet.dto.TransferMoneyRequestDTO;
 import com.userwallet.wallet.entities.Transactions;
 import com.userwallet.wallet.entities.Users;
@@ -33,7 +32,5 @@ public interface UserWalletService {
 	public ApiResponse<Wallet> tranferMoney(TransferMoneyRequestDTO transferMoneyReq);
 
 	public Iterable<Transactions> getPassBook(Long userId);
-
-	public ApiResponse<Users> signIn(SignInDTO signin);
 
 }

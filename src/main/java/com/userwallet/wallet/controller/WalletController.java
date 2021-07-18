@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.userwallet.wallet.dto.AddMoneyRequestDTO;
-import com.userwallet.wallet.dto.SignInDTO;
 import com.userwallet.wallet.dto.TransferMoneyRequestDTO;
 import com.userwallet.wallet.entities.Transactions;
 import com.userwallet.wallet.entities.Users;
@@ -40,11 +39,6 @@ public class WalletController {
 			throws InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException, BadPaddingException,
 			IllegalBlockSizeException, InvalidAlgorithmParameterException, InvalidKeySpecException {
 		return userwallet.addUser(user);
-	}
-
-	@PostMapping("/users/sign-in")
-	public ApiResponse<Users> signIn(@RequestBody SignInDTO signin) {
-		return userwallet.signIn(signin);
 	}
 
 	// Get all the Users.
@@ -79,7 +73,6 @@ public class WalletController {
 	}
 
 	// transfer money.
-
 	@PutMapping("/users/transaction")
 	public ApiResponse<Wallet> tranferMoney(@RequestBody TransferMoneyRequestDTO transferMoneyReq) {
 		return userwallet.tranferMoney(transferMoneyReq);

@@ -50,11 +50,12 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 	@Override
 	public void configure(final HttpSecurity http) throws Exception {
 		http.authorizeRequests().antMatchers("/").anonymous().antMatchers(HttpMethod.POST, "/users").permitAll()
-				.antMatchers("/users/sign-in").hasAnyRole("USER")
-				.antMatchers(HttpMethod.GET, "/users").hasAnyRole("ADMIN").antMatchers("/users/passbook/{userId}")
-				.hasAnyRole("USER").antMatchers("/wallet").hasAnyRole("USER").antMatchers(HttpMethod.PUT, "/users")
-				.hasAnyRole("USER").antMatchers("/users/transaction").hasAnyRole("USER").anyRequest().authenticated()
-				.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().csrf()
-				.disable();
+				.antMatchers(HttpMethod.GET, "/users").hasAuthority("ADMIN")
+				.antMatchers(HttpMethod.GET, "/users/{userId}").hasAuthority("USER")
+				.antMatchers(HttpMethod.GET, "/users/passbook/{userId}").hasAuthority("USER")
+				.antMatchers(HttpMethod.POST, "/wallet").hasAuthority("USER").antMatchers(HttpMethod.PUT, "/users")
+				.hasAuthority("USER").antMatchers(HttpMethod.PUT, "/users/transaction").hasAuthority("USER")
+				.anyRequest().authenticated().and().sessionManagement()
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().csrf().disable();
 	}
 }

@@ -71,7 +71,6 @@ public class Wallet {
 
 	public Wallet() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 }

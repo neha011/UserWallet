@@ -19,7 +19,6 @@ import javax.crypto.NoSuchPaddingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,14 +30,13 @@ import com.userwallet.wallet.dao.TransactionsDAO;
 import com.userwallet.wallet.dao.UserDAO;
 import com.userwallet.wallet.dao.WalletDao;
 import com.userwallet.wallet.dto.AddMoneyRequestDTO;
-import com.userwallet.wallet.dto.SignInDTO;
+//import com.userwallet.wallet.dto.SignInDTO;
 import com.userwallet.wallet.dto.TransferMoneyRequestDTO;
 import com.userwallet.wallet.entities.Roles;
 import com.userwallet.wallet.entities.Transactions;
 import com.userwallet.wallet.entities.Users;
 import com.userwallet.wallet.entities.Wallet;
 import com.userwallet.wallet.security.AppUser;
-import com.userwallet.wallet.util.AESCryptography;
 import com.userwallet.wallet.util.ApiResponse;
 
 @Service
@@ -47,13 +45,6 @@ public class UserWalletImpl implements UserWalletService {
 	private Logger logger = LoggerFactory.getLogger(UserWalletImpl.class);
 
 	PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
-	@Value("${encryption.password}")
-	private String password;
-	@Value("${encryption.salt}")
-	private String salt;
-	@Value("${encryption.iv}")
-	private String iv;
 
 	@Autowired
 	private UserDAO userdao;
@@ -92,12 +83,6 @@ public class UserWalletImpl implements UserWalletService {
 			newuser.setDateOfBirth(user.getDateOfBirth());
 			newuser.setEmailId(user.getEmailId());
 			newuser.setMobileNumber(user.getMobileNumber());
-			/*
-			 * AESCryptography aesCryptography = new AESCryptography(password, salt, iv);
-			 * String encyptedPassword = aesCryptography.encrypt(user.getPassword());
-			 * newuser.setPassword(encyptedPassword);
-			 */
-			
 			newuser.setPassword(passwordEncoder.encode(user.getPassword()));
 			newuser.setRoles(Arrays.asList(r1.get()));
 			newuser.setCreatedAt(LocalDateTime.now());
@@ -120,7 +105,7 @@ public class UserWalletImpl implements UserWalletService {
 			if (!com.google.common.base.Strings.isNullOrEmpty(user.getLastName()))
 				u1.setLastName(user.getLastName());
 			if (!com.google.common.base.Strings.isNullOrEmpty(user.getEmailId()))
-				u1.setEmailId(user.getEmailId());
+				return new ApiResponse<>(HttpStatus.NOT_ACCEPTABLE, "Email updation Not Allowed!", null);
 			if (user.getDateOfBirth() != null)
 				u1.setDateOfBirth(user.getDateOfBirth());
 			u1.setUpdatedAt(LocalDateTime.now());
@@ -247,34 +232,6 @@ public class UserWalletImpl implements UserWalletService {
 	@Override
 	public Iterable<Transactions> getPassBook(Long userId) {
 		return transdao.findByUserId(userId);
-	}
-
-	@Override
-	public ApiResponse<Users> signIn(SignInDTO signin) {
-		Optional<Users> userdetail = userdao.findByMobileNumb(signin.getMobileNumber());
-		if (userdetail.isPresent()) {
-			logger.info("Logging in shortly...}");
-			Users u1 = userdetail.get();
-			String encryptedString = u1.getPassword();
-			AESCryptography aesCryptography = new AESCryptography(password, salt, iv);
-			String decryptedPassword;
-			try {
-				decryptedPassword = aesCryptography.decrypt(encryptedString);
-			} catch (Exception e) {
-
-				return new ApiResponse<>(HttpStatus.BAD_REQUEST,
-						"Exception occurred because Bad key is used during decryption", null);
-			}
-
-			if (decryptedPassword.equals(signin.getPassword())) {
-				return new ApiResponse<>(HttpStatus.OK, "Logged in successfull!", null);
-			} else {
-				return new ApiResponse<>(HttpStatus.CONFLICT, "Password is incorrect!", null);
-			}
-		} else {
-			return new ApiResponse<>(HttpStatus.NOT_FOUND, "Mobile Number is incorrect!", null);
-		}
-
 	}
 
 	public AppUser loadUserByEmail(String email) {

@@ -13,15 +13,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "users")
 public class Users {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2827512551918161885L;
-	
-
-	/*
-	 * public Users(Users user) { }
-	 */
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long userId;
